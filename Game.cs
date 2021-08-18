@@ -194,22 +194,28 @@ public class Food : MonoBehaviour
     }
 
     public void PlaceFood(Queue<int> playerX, Queue<int> playerY) {
+
+        CheckIfNewPositionFreeAndSetCoordinates(playerX, playerY);
+        food.transform.position = new Vector3(x, y, 0);
+    }
+
+    public void CheckIfNewPositionFreeAndSetCoordinates(Queue<int> playerX, Queue<int> playerY)
+    {
         x = Random.Range(-5, 5);
         y = Random.Range(-5, 5);
 
         int[] xArr = playerX.ToArray();
         int[] yArr = playerY.ToArray();
 
-        for(int i = 0; i < xArr.Length; i++)
+        for (int i = 0; i < xArr.Length; i++)
         {
-            if(xArr[i] == x && yArr[i] == y)
+            if (xArr[i] == x && yArr[i] == y)
             {
                 x = Random.Range(-5, 5);
                 y = Random.Range(-5, 5);
                 i = 0;
             }
         }
-
-        food.transform.position = new Vector3(x, y, 0);
     }
+
 }
