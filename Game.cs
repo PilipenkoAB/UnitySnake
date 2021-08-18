@@ -60,7 +60,6 @@ public class Game : MonoBehaviour
         else
         {
             endGame.SetActive(true);
-            Debug.Log("DEAD");
         }
 
     }
@@ -86,12 +85,12 @@ public class Snake : MonoBehaviour
 
     public void CreateFirstThreeBodyParts()
     {
-        CreateBodyPart(0, 0);
-        CreateBodyPart(1, 0);
-        CreateBodyPart(1, 0);
+        CollisionCheckWithNewCoordinates(0, 0);
+        CollisionCheckWithNewCoordinates(1, 0);
+        CollisionCheckWithNewCoordinates(1, 0);
     }
 
-    public void CreateBodyPart(int xCoord, int yCoord)
+    public void CollisionCheckWithNewCoordinates(int xCoord, int yCoord)
     {
         headX += xCoord;
         headY += yCoord;
@@ -101,13 +100,27 @@ public class Snake : MonoBehaviour
             Game.dead = true;
             return;
         }
+        CreateNewHead();
+    }
 
+    public void CreateNewHead() 
+    {
         x.Enqueue(headX);
         y.Enqueue(headY);
 
-        GameObject bodyPart = (GameObject) Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        GameObject bodyPart = (GameObject)Instantiate(prefab, new Vector3(headX, headY, 0), Quaternion.identity);
         bodyPart.name = "BodyPartX=" + headX + ";Y=" + headY;
-        bodyPart.transform.position = new Vector3(headX, headY, 0);
+    }
+
+    public void DeleteOldTail()
+    {
+        GameObject bodyPart = GameObject.Find("BodyPartX=" + x.Peek() + ";Y=" + y.Peek());
+        if (bodyPart)
+        {
+            Destroy(bodyPart.gameObject);
+        }
+        x.Dequeue();
+        y.Dequeue();
     }
 
     public void Movement(string pressed, Food food)
@@ -116,37 +129,31 @@ public class Snake : MonoBehaviour
 
         if (pressed == "r")
         {
-            CreateBodyPart(1, 0);
+            CollisionCheckWithNewCoordinates(1, 0);
         }
         else if(pressed == "l")
         {
-            CreateBodyPart(-1, 0);
+            CollisionCheckWithNewCoordinates(-1, 0);
         }
         else if (pressed == "u")
         {
-            CreateBodyPart(0, 1);
+            CollisionCheckWithNewCoordinates(0, 1);
         }
         else if (pressed == "d")
         {
-            CreateBodyPart(0, -1);
+            CollisionCheckWithNewCoordinates(0, -1);
         }
 
-        if(headX == food.x && headY == food.y)
+        
+
+        if (headX == food.x && headY == food.y)
         {
             food.PlaceFood(x, y);
             Game.ScoreUpdate();
             return;
         }
 
-
-
-        GameObject bodyPart = GameObject.Find("BodyPartX=" + x.Peek() + ";Y=" + y.Peek());
-        if (bodyPart)
-        {
-            Destroy(bodyPart.gameObject);
-        }
-        x.Dequeue();
-        y.Dequeue();
+        DeleteOldTail();
     }
 
     private bool CollisionCheck()
