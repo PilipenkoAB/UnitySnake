@@ -11,7 +11,7 @@ public class Game : MonoBehaviour
     public GameObject myPrefab;
     Snake player = new Snake();
     Food food = new Food();
-    string pressed = "r"; // l - left; r - right; u - up; d - down - movement direction
+    string pressed = "r"; // l - left; r - right; u - up; d - down : movement direction
     public static bool dead = false;
     public static int score = 0;
     public Text scoreLabel;
